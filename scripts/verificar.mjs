@@ -181,6 +181,10 @@ try {
     await rueda(page, 1, 300);
     if (conCapturas) await page.screenshot({ path: foto('10-carta-encargo.png') });
 
+    /* la pila, medida: alturas iguales, contenido que cabe, y nadie se suelta
+       antes de que la última se pose (el fallo clásico de la última tarjeta) */
+    const alturas = await page.evaluate(() => [...document.querySelectorAll('.pila__item .tarjeta')].map(t => ({ alto: t.offsetHeight, cabe: t.scrollHeight <= t.clientHeight + 1 })));
+    comprobar(new Set(alturas.map(a => a.alto)).size === 1 && alturas.every(a => a.cabe), 'pila: las cinco tarjetas miden lo mismo y su contenido cabe → ' + JSON.stringify(alturas));
     await hasta(page, '#pase');
     await rueda(page, 1, 400);
     if (conCapturas) await page.screenshot({ path: foto('11-pase.png') });
@@ -233,6 +237,40 @@ try {
     comprobar(errores.length === 0, 'consola sin errores' + (errores.length ? ' → ' + errores.join(' | ') : ''));
     const caidasReales = caidas.filter(c => !/favicon\.ico|google\.com\/maps|gstatic|googleapis\.com\/maps|maps\.google/.test(c));
     comprobar(caidasReales.length === 0, 'sin peticiones caídas' + (caidasReales.length ? ' → ' + caidasReales.join(' | ') : ''));
+    await contexto.close();
+  }
+
+  /* ───── 1b. la pila de la carta, en una página limpia y bajando desde arriba ─────
+     El fallo clásico está en la ÚLTIMA tarjeta: las de atrás se sueltan antes de
+     que se pose (se separa el montón) o la anterior asoma por debajo. */
+  {
+    const { contexto, page } = await nuevaPagina(navegador);
+    await contexto.addInitScript(() => { try { localStorage.setItem('gabi-cookies', 'ok'); } catch (e) {} });
+    await page.goto(base + '/index.html', { waitUntil: 'networkidle' });
+    await page.waitForTimeout(4600);
+    await page.mouse.move(720, 450);
+    await hasta(page, '#carta-brasa', 300);
+    const tope = await page.evaluate(() => parseFloat(getComputedStyle(document.querySelector('.pila__item')).top));
+    let ultimo = null, sueltaAntes = null, asomaDebajo = null, seSeparan = null, ultimaPosada = false;
+    for (let i = 0; i < 45; i++) {
+      await page.mouse.wheel(0, 90);
+      await page.waitForTimeout(170);
+      const m = await page.evaluate(() => [...document.querySelectorAll('.pila__item')].map(li => { const r = li.getBoundingClientRect(); return [Math.round(r.top), Math.round(r.bottom)]; }));
+      ultimo = m;
+      const ultima = m[m.length - 1];
+      const anteriores = m.slice(0, -1);
+      if (!ultimaPosada && ultima[0] > tope + 2 && ultima[0] < 900 && anteriores.some(a => a[0] < tope - 2)) sueltaAntes = sueltaAntes || { paso: i, m };
+      if (Math.abs(ultima[0] - tope) <= 2) {
+        ultimaPosada = true;
+        if (anteriores.some(a => a[1] > ultima[1] + 1)) asomaDebajo = asomaDebajo || { paso: i, m };
+      }
+      /* una vez posada la última, salen como un bloque: nadie se separa */
+      if (ultimaPosada && anteriores.some(a => Math.abs(a[0] - ultima[0]) > 2)) seSeparan = seSeparan || { paso: i, m };
+    }
+    const sinLlegar = ultimaPosada ? '' : ' (la última no llegó a posarse: ' + JSON.stringify(ultimo) + ')';
+    comprobar(ultimaPosada && !sueltaAntes, 'pila: ninguna tarjeta se suelta antes de que se pose la última' + (sueltaAntes ? ' → ' + JSON.stringify(sueltaAntes) : '') + sinLlegar);
+    comprobar(ultimaPosada && !asomaDebajo, 'pila: la última tapa entera a la anterior (nada asoma por debajo)' + (asomaDebajo ? ' → ' + JSON.stringify(asomaDebajo) : '') + sinLlegar);
+    comprobar(ultimaPosada && !seSeparan, 'pila: al acabarse, las cinco salen juntas como un bloque' + (seSeparan ? ' → ' + JSON.stringify(seSeparan) : '') + sinLlegar);
     await contexto.close();
   }
 

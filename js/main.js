@@ -381,7 +381,7 @@
         disparos.push(window.ScrollTrigger.create({
           trigger: siguiente,
           start: 'top bottom',
-          end: 'top ' + Math.round(tope + 40) + 'px',
+          end: 'top ' + Math.round(tope) + 'px',          /* acaba justo cuando la siguiente se posa */
           scrub: true,
           animation: tw
         }));

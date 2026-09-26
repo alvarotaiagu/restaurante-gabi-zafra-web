@@ -472,13 +472,30 @@ h1, h2, h3 { font-weight: 500; }
 
 .carta__cifras { display: none; }
 
-.pila { list-style: none; margin: 0 auto; padding: 0; max-width: 76rem; }
-.pila__item {
-  position: sticky; top: calc(var(--cab) + 3vh);   /* el <li> es el sticky */
-  margin-bottom: 34vh;                              /* su margen da el recorrido */
+/* Pila anclada. Dos reglas que no se negocian:
+   1. TODAS las tarjetas miden lo mismo. Si la última es más baja, la anterior
+      asoma por debajo; y como un sticky se suelta cuando su borde inferior toca
+      el final del contenedor, las altas se sueltan ANTES de que llegue la última
+      y el montón se deshace con la última aún subiendo.
+   2. Un sticky se suelta cuando su CAJA DE MARGEN toca el final del contenedor.
+      Si la última no lleva el mismo margin-bottom que las demás, las de atrás
+      se sueltan antes y el montón se separa. Mismo alto + mismo margen en
+      TODAS (la última incluida) = se sueltan juntas; el ::after solo pone el
+      reposo con la pila completa. */
+.pila {
+  --tope-pila: calc(var(--cab) + 3vh);
+  --alto-tarjeta: calc(100vh - var(--cab) - 6vh);
+  --recorrido: 34vh;
+  --reposo: 28vh;
+  list-style: none; margin: 0 auto; padding: 0; max-width: 76rem;
 }
-.pila__item:last-child { margin-bottom: 0; }
-.pila::after { content: ''; display: block; height: 26vh; }   /* recorrido final */
+.pila__item {
+  position: sticky; top: var(--tope-pila);          /* el <li> es el sticky */
+  margin-bottom: var(--recorrido);                  /* su margen da el recorrido */
+}
+.pila::after { content: ''; display: block; height: var(--reposo); }
+.pila__item .tarjeta { height: var(--alto-tarjeta); align-content: center; }
+.pila__item .ventana--tarjeta { width: min(100%, 230px, 24vh); }
 
 .tarjeta {
   position: relative;
@@ -518,7 +535,12 @@ h1, h2, h3 { font-weight: 500; }
 }
 .tarjeta__cabeza > p { margin: 0; color: var(--tinta-suave); max-width: 24rem; }
 .ventana--tarjeta { width: min(100%, 230px); margin-top: 1.6rem; }
-.tarjeta__enlace { margin-top: 1.6rem; color: var(--teja); grid-column: 2; justify-self: start; }
+.tarjeta__acciones {
+  grid-column: 2;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.8rem;
+  margin-top: .4rem;
+  color: var(--teja);
+}
 
 .platos { list-style: none; margin: 0; padding: 0; align-self: center; }
 .platos--dos { columns: 2; column-gap: 2.6rem; }
@@ -857,7 +879,7 @@ h1, h2, h3 { font-weight: 500; }
 .densidad-sobria .tarjeta::after { opacity: 0 !important; }
 .densidad-sobria .pila__item:nth-child(2) .tarjeta { grid-template-columns: minmax(0, 3fr) minmax(0, 8fr); }
 .densidad-sobria .ventana--tarjeta { display: none; }
-.densidad-sobria .tarjeta__enlace { grid-column: 1; }
+.densidad-sobria .tarjeta__acciones { grid-column: 1; }
 /* …y a cambio entra la carta en cifras, que la versión Soportal no tiene */
 .densidad-sobria .carta__cifras {
   display: table; width: min(100%, 44rem);
@@ -962,8 +984,9 @@ html.con-cursor, html.con-cursor * { cursor: none !important; }
 
   .pila__item { position: static; margin-bottom: 1.4rem; }
   .pila::after { display: none; }
+  .pila__item .tarjeta { height: auto; }
   .tarjeta { grid-template-columns: 1fr; border-radius: 50% 50% 18px 18px / 64px 64px 18px 18px; padding: 3.6rem 1.4rem 2rem; }
-  .tarjeta__enlace { grid-column: 1; }
+  .tarjeta__acciones { grid-column: 1; }
   .platos--dos { columns: 1; }
   .ventana--tarjeta { width: min(62%, 220px); }
 
@@ -1008,6 +1031,7 @@ html.con-cursor, html.con-cursor * { cursor: none !important; }
 @media (min-width: 901px) and (max-height: 760px) {
   .pila__item { position: static; margin-bottom: 1.6rem; }
   .pila::after { display: none; }
+  .pila__item .tarjeta { height: auto; }
 }
 
 @media (prefers-reduced-motion: reduce) {
