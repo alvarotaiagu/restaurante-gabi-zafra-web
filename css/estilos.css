@@ -458,7 +458,7 @@ h1, h2, h3 { font-weight: 500; }
 /* ═══════════════ carta ═══════════════ */
 .carta {
   background: var(--marino); color: var(--crema);
-  padding: clamp(2.5rem, 5vw, 4.5rem) var(--margen) clamp(5rem, 9vw, 8rem);
+  padding: clamp(2.5rem, 5vw, 4.5rem) var(--margen) clamp(3rem, 5vw, 4.5rem);
   margin-top: -1px;
 }
 .carta__cabeza { max-width: 60rem; margin: 0 auto clamp(3rem, 6vw, 5rem); text-align: center; }
@@ -482,11 +482,13 @@ h1, h2, h3 { font-weight: 500; }
       se sueltan antes y el montón se separa. Mismo alto + mismo margen en
       TODAS (la última incluida) = se sueltan juntas; el ::after solo pone el
       reposo con la pila completa. */
-.pila {
+.carta {
   --tope-pila: calc(var(--cab) + 3vh);
-  --alto-tarjeta: 36rem;          /* respaldo sin JS; el JS pone el alto de la más alta */
   --recorrido: 34vh;
-  --reposo: 28vh;
+  --reposo: 22vh;
+}
+.pila {
+  --alto-tarjeta: 36rem;          /* respaldo sin JS; el JS pone el alto de la más alta */
   list-style: none; margin: 0 auto; padding: 0; max-width: 76rem;
 }
 .pila__item {
@@ -572,9 +574,12 @@ h1, h2, h3 { font-weight: 500; }
   vertical-align: -1px;
 }
 
+/* El margin-bottom de la última tarjeta es obligatorio (hace que la pila salga
+   en bloque) pero deja un hueco vacío detrás: lo que sigue sube a ocuparlo.
+   Solo cuenta para el sticky, no para los hermanos de la lista. */
 .carta__acompanar {
   max-width: 44rem;
-  margin: clamp(2.4rem, 4vw, 3.4rem) auto 0;
+  margin: calc(-1 * var(--recorrido) + 2.6rem) auto 0;
   text-align: center;
   color: rgba(251, 247, 236, .8);
 }
@@ -873,6 +878,7 @@ h1, h2, h3 { font-weight: 500; }
 /* la carta deja de apilarse: se ven los cinco capítulos a la vez… */
 .densidad-sobria .pila { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.4rem; max-width: 84rem; }
 .densidad-sobria .pila::after { display: none; }
+.densidad-sobria .carta { --recorrido: 0px; }   /* sin pila no hay hueco que tapar */
 .densidad-sobria .pila__item { position: static; margin-bottom: 0; }
 .densidad-sobria .pila__item:nth-child(2) { grid-column: span 2; grid-row: 1; }
 .densidad-sobria .tarjeta { grid-template-columns: 1fr; padding: 2.4rem 2rem 2rem; height: 100%; transform: none !important; }
@@ -992,6 +998,7 @@ html.con-cursor, html.con-cursor * { cursor: none !important; }
   .ventana--casa { max-width: 24rem; }
   .casa__texto { padding-top: 0; }
 
+  .carta { --recorrido: 0px; }
   .pila__item { position: static; margin-bottom: 1.4rem; }
   .pila::after { display: none; }
   .pila__item .tarjeta { height: auto; }
@@ -1039,6 +1046,7 @@ html.con-cursor, html.con-cursor * { cursor: none !important; }
 
 /* en portátiles bajos la tarjeta más larga no cabe anclada: se desapila */
 @media (min-width: 901px) and (max-height: 760px) {
+  .carta { --recorrido: 0px; }
   .pila__item { position: static; margin-bottom: 1.6rem; }
   .pila::after { display: none; }
   .pila__item .tarjeta { height: auto; }
