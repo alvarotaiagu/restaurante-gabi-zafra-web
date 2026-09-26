@@ -444,21 +444,37 @@
   /* ───────────────── cursor propio ───────────────── */
   (function cursor() {
     if (!movimiento || esTactil) return;
+    /* aro que persigue con retraso + punto pegado al puntero */
     var c = document.createElement('div');
+    var p = document.createElement('div');
     c.className = 'cursor';
-    c.setAttribute('aria-hidden', 'true');
-    document.body.appendChild(c);
-    var aX = gsap.quickTo(c, 'x', { duration: 0.22, ease: 'power3.out' });
-    var aY = gsap.quickTo(c, 'y', { duration: 0.22, ease: 'power3.out' });
+    p.className = 'cursor-punto';
+    [c, p].forEach(function (n) { n.setAttribute('aria-hidden', 'true'); document.body.appendChild(n); });
+
+    var aX = gsap.quickTo(c, 'x', { duration: 0.28, ease: 'power3.out' });
+    var aY = gsap.quickTo(c, 'y', { duration: 0.28, ease: 'power3.out' });
+
+    function mostrar(si) {
+      c.classList.toggle('cursor--vivo', si);
+      p.classList.toggle('cursor--vivo', si);
+    }
+
     window.addEventListener('pointermove', function (e) {
+      if (e.pointerType && e.pointerType !== 'mouse') return;
       if (!c.classList.contains('cursor--vivo')) {
         gsap.set(c, { x: e.clientX, y: e.clientY });
-        c.classList.add('cursor--vivo');
+        html.classList.add('con-cursor');        /* el del sistema se oculta solo cuando el propio ya se ve */
+        mostrar(true);
       }
+      gsap.set(p, { x: e.clientX, y: e.clientY });
       aX(e.clientX); aY(e.clientY);
     });
+    document.documentElement.addEventListener('mouseleave', function () { mostrar(false); });
+    document.documentElement.addEventListener('mouseenter', function () { if (html.classList.contains('con-cursor')) mostrar(true); });
     document.addEventListener('pointerover', function (e) {
-      c.classList.toggle('cursor--activo', !!e.target.closest('a, button, .ventana, .ambiente'));
+      var sobre = !!e.target.closest('a, button, .ventana, .ambiente');
+      c.classList.toggle('cursor--activo', sobre);
+      p.classList.toggle('cursor-punto--activo', sobre);
     });
   })();
 

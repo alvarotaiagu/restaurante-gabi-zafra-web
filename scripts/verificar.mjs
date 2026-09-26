@@ -120,6 +120,31 @@ try {
     comprobar(desborda <= 1, 'sin desbordamiento horizontal en escritorio (' + desborda + 'px)');
     if (conCapturas) await page.screenshot({ path: foto('01-hero.png') });
 
+    /* cursor propio: sustituye al del sistema y se rellena de forma visible sobre lo pulsable */
+    await page.mouse.move(700, 300);
+    await page.mouse.move(720, 320, { steps: 4 });
+    await page.waitForTimeout(400);
+    const cursorLibre = await page.evaluate(() => ({
+      sistema: getComputedStyle(document.body).cursor,
+      aro: getComputedStyle(document.querySelector('.cursor')).opacity,
+      punto: getComputedStyle(document.querySelector('.cursor-punto')).opacity
+    }));
+    comprobar(cursorLibre.sistema === 'none' && cursorLibre.aro === '1' && cursorLibre.punto === '1',
+      'cursor propio visible (aro + punto) y el del sistema oculto → ' + JSON.stringify(cursorLibre));
+    const boton = await page.locator('.hero__acciones .boton').boundingBox();
+    await page.mouse.move(boton.x + boton.width / 2, boton.y + boton.height / 2, { steps: 6 });
+    await page.waitForTimeout(600);
+    const cursorBoton = await page.evaluate(() => {
+      const e = getComputedStyle(document.querySelector('.cursor'));
+      return { fondo: e.backgroundColor, ancho: e.width, sistema: getComputedStyle(document.querySelector('.hero__acciones .boton')).cursor };
+    });
+    comprobar(/rgba\(200, 146, 72, 0\.38\)/.test(cursorBoton.fondo) && cursorBoton.ancho === '64px' && cursorBoton.sistema === 'none',
+      'sobre un botón el aro crece y se rellena, sin cursor del sistema → ' + JSON.stringify(cursorBoton));
+    if (conCapturas) await page.screenshot({ path: foto('01b-cursor-boton.png'), clip: { x: boton.x - 60, y: boton.y - 60, width: boton.width + 120, height: boton.height + 120 } });
+    await page.mouse.move(720, 200, { steps: 4 });
+    await page.waitForTimeout(500);
+    if (conCapturas) await page.screenshot({ path: foto('01c-cursor-libre.png'), clip: { x: 640, y: 120, width: 160, height: 160 } });
+
     const antes = await selloEstado(page);
     comprobar(antes.vinoY >= 150 && antes.lugar > 0.9 && antes.nota < 0.1, 'al entrar: copa vacía y el sello dice el lugar → ' + JSON.stringify(antes));
 

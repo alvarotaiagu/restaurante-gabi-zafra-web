@@ -881,16 +881,36 @@ h1, h2, h3 { font-weight: 500; }
 /* ═══════════ fin del bloque [MANDO DE MAQUETA] ═══════════ */
 
 /* ═══════════════ cursor propio ═══════════════ */
-.cursor {
-  position: fixed; top: 0; left: 0; z-index: 800;
-  width: 24px; height: 24px; margin: -12px 0 0 -12px;
-  border: 1.5px solid var(--ambar); border-radius: 50%;
+/* el propio sustituye al del sistema: si no, se ven los dos */
+html.con-cursor, html.con-cursor * { cursor: none !important; }
+.cursor, .cursor-punto {
+  position: fixed; top: 0; left: 0;
+  border-radius: 50%;
   pointer-events: none;
-  transition: width .3s var(--suave), height .3s var(--suave), margin .3s var(--suave), background-color .3s var(--suave);
+  transition: opacity .25s ease;
 }
-.cursor:not(.cursor--vivo) { opacity: 0; }
-.cursor--activo { width: 58px; height: 58px; margin: -29px 0 0 -29px; background: rgba(200, 146, 72, .16); }
-@media (hover: none), (pointer: coarse) { .cursor { display: none !important; } }
+.cursor {
+  z-index: 800;
+  width: 34px; height: 34px; margin: -17px 0 0 -17px;
+  border: 1.5px solid var(--ambar);
+  background: transparent;
+  transition: opacity .25s ease, width .35s var(--suave), height .35s var(--suave), margin .35s var(--suave),
+    background-color .35s var(--suave), border-color .35s var(--suave);
+}
+.cursor-punto {
+  z-index: 801;
+  width: 8px; height: 8px; margin: -4px 0 0 -4px;
+  background: var(--ambar);
+  box-shadow: 0 0 0 1.5px rgba(251, 247, 236, .85);   /* se lee sobre el ámbar y sobre el marino */
+}
+.cursor--activo {
+  width: 64px; height: 64px; margin: -32px 0 0 -32px;
+  background: rgba(200, 146, 72, .38);
+  border-color: var(--ambar-claro);
+}
+.cursor-punto--activo { opacity: 0; }
+.cursor:not(.cursor--vivo), .cursor-punto:not(.cursor--vivo) { opacity: 0; }
+@media (hover: none), (pointer: coarse) { .cursor, .cursor-punto { display: none !important; } }
 
 /* ═══════════════ responsive ═══════════════ */
 @media (max-width: 1100px) {
