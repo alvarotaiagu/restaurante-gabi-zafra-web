@@ -579,6 +579,9 @@
   (function mandoMaqueta() {
     var mando = document.getElementById('mando');
     if (!mando) return;
+    /* solo con ?revision en la URL: el enlace que recibe el cliente sale limpio
+       y el mando aparece cuando se le enseña la web en persona */
+    if (!/[?&]revision\b/.test(window.location.search)) return;
     mando.hidden = false;                       /* sin JS no haría nada: lo enseña el JS */
     var botones = Array.prototype.slice.call(mando.querySelectorAll('[data-densidad]'));
 

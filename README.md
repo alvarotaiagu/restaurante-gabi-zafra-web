@@ -66,7 +66,12 @@ node scripts/verificar.mjs --capturas
 
 ## Quitar el mando de maqueta antes de entregar
 
-El mando de abajo a la izquierda cambia en vivo entre dos densidades:
+El mando **solo aparece si la URL lleva `?revision`**
+(`https://alvarotaiagu.github.io/restaurante-gabi-zafra-web/?revision`). El enlace
+que se manda al cliente, sin el parámetro, sale limpio; en la reunión se abre el de
+revisión para comparar. Sin `?revision` tampoco se aplica una densidad guardada.
+
+Cambia en vivo entre dos densidades:
 
 - **Soportal**: el arco en todas partes (separadores, ventanas, tarjetas, ambientes, marco del mapa, arco de encargos).
 - **Sobria**: el arco solo donde significa algo (la arcada del hero y el sello). Las tarjetas dejan de apilarse y se ven los cinco capítulos a la vez, y a cambio entra **la carta en cifras** (platos y horquilla de precios por capítulo), que la Soportal no tiene.

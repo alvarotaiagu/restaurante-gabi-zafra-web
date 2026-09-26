@@ -37,6 +37,9 @@
   var h = document.documentElement;
   h.classList.remove('sin-js');
   h.classList.add('con-js');
+  /* la densidad guardada solo cuenta en modo revisión (?revision): si no, un
+     navegador donde se probó la sobria la seguiría viendo sin mando para volver */
+  if (!/[?&]revision\b/.test(location.search)) return;
   try {
     var d = localStorage.getItem('gabi-densidad');
     if (d === 'sobria' || d === 'soportal') {
@@ -700,12 +703,12 @@
      JS marcado igual en main.js y el script bloqueante del <head>.
      ═══════════════════════════════════════════════════════════════════════ -->
 <div class="mando" id="mando" hidden>
-  <span class="mando__titulo">Maqueta · densidad</span>
+  <span class="mando__titulo">Versión</span>
   <div class="mando__botones" role="group" aria-label="Densidad visual de la maqueta">
     <button type="button" data-densidad="soportal" aria-pressed="true">Soportal</button>
     <button type="button" data-densidad="sobria" aria-pressed="false">Sobria</button>
   </div>
-  <span class="mando__pie">Interno. No viaja al cliente.</span>
+  <span class="mando__pie">Dos versiones de la misma web</span>
 </div>
 
 <script type="application/ld+json">

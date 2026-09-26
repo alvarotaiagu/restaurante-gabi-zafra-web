@@ -234,6 +234,13 @@ try {
     const iframesDespues = await page.$$eval('iframe', n => n.length);
     comprobar(iframesAntes === 0 && iframesDespues === 1, 'el iframe del mapa no existe hasta el clic (' + iframesAntes + ' → ' + iframesDespues + ')');
 
+    /* el enlace que recibe el cliente sale limpio: sin ?revision no hay mando */
+    const mandoSinRevision = await page.evaluate(() => {
+      const m = document.getElementById('mando');
+      return { oculto: m.hidden, display: getComputedStyle(m).display };
+    });
+    comprobar(mandoSinRevision.oculto && mandoSinRevision.display === 'none', 'sin ?revision el mando de maqueta no se ve → ' + JSON.stringify(mandoSinRevision));
+
     comprobar(errores.length === 0, 'consola sin errores' + (errores.length ? ' → ' + errores.join(' | ') : ''));
     const caidasReales = caidas.filter(c => !/favicon\.ico|google\.com\/maps|gstatic|googleapis\.com\/maps|maps\.google/.test(c));
     comprobar(caidasReales.length === 0, 'sin peticiones caídas' + (caidasReales.length ? ' → ' + caidasReales.join(' | ') : ''));
@@ -277,7 +284,7 @@ try {
   /* ───── 2. las dos densidades ───── */
   {
     const { contexto, page } = await nuevaPagina(navegador);
-    await page.goto(base + '/index.html', { waitUntil: 'networkidle' });
+    await page.goto(base + '/index.html?revision', { waitUntil: 'networkidle' });
     await page.waitForTimeout(4600);
     await page.click('#cookies-aceptar');
     await page.waitForTimeout(300);
@@ -325,7 +332,7 @@ try {
   /* ───── 3. móvil ───── */
   {
     const { contexto, page, errores } = await nuevaPagina(navegador, { viewport: { width: 390, height: 844 } });
-    await page.goto(base + '/index.html', { waitUntil: 'networkidle' });
+    await page.goto(base + '/index.html?revision', { waitUntil: 'networkidle' });
     await page.waitForTimeout(4600);
     const ancho = await page.evaluate(() => ({ innerWidth: window.innerWidth, scroll: document.documentElement.scrollWidth }));
     comprobar(ancho.innerWidth === 390 && ancho.scroll - ancho.innerWidth <= 1, 'móvil: el viewport no se ensancha (' + JSON.stringify(ancho) + ')');
