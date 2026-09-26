@@ -290,7 +290,7 @@ h1, h2, h3 { font-weight: 500; }
 .hero__nota svg { color: var(--ambar-claro); }
 
 .hero__sello {
-  position: absolute; z-index: 2;
+  position: absolute; z-index: 3;             /* por encima del texto cuando se cruzan al bajar */
   right: var(--margen); top: calc(var(--cab) + 2.2rem);
   width: clamp(150px, 17vw, 252px); aspect-ratio: 1;
   border-radius: 50%;
