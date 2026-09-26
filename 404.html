@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Este arco no lleva a ninguna parte · Restaurante Gabi</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500&family=Inter:wght@400;600&display=swap">
+<style>
+  :root { --crema: #FBF7EC; --marino: #1E2A44; --terracota: #B5562A; --ambar: #C89248; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; min-height: 100svh;
+    display: grid; place-items: center;
+    background: var(--marino); color: var(--crema);
+    font-family: 'Inter', system-ui, sans-serif;
+    padding: 1.5rem;
+  }
+  .arco {
+    width: min(90vw, 460px);
+    padding: clamp(5rem, 16vw, 7.5rem) clamp(1.5rem, 6vw, 3rem) 3rem;
+    border: 1.5px solid rgba(232, 185, 120, .55); border-bottom: 0;
+    border-radius: 9999px 9999px 0 0;
+    text-align: center;
+  }
+  .numero { font: 500 clamp(4rem, 18vw, 6.5rem)/1 'Fraunces', Georgia, serif; color: #E8B978; margin: 0; }
+  h1 { font: 500 clamp(1.6rem, 6vw, 2.2rem)/1.15 'Fraunces', Georgia, serif; margin: 1rem 0 .8rem; }
+  p { color: rgba(251, 247, 236, .8); line-height: 1.6; margin: 0 0 2rem; }
+  a {
+    display: inline-block; padding: 1rem 1.6rem; border-radius: 999px;
+    background: var(--crema); color: #3B2412; font-weight: 600; text-decoration: none;
+  }
+  a:focus-visible { outline: 2px solid var(--ambar); outline-offset: 3px; }
+</style>
+</head>
+<body>
+  <main class="arco">
+    <p class="numero">404</p>
+    <h1>Este arco no lleva a ninguna parte.</h1>
+    <p>La página que busca no existe o ha cambiado de sitio. La mesa, en cambio, sigue en la Plaza de España.</p>
+    <a href="./">Volver a Restaurante Gabi</a>
+  </main>
+</body>
+</html>
