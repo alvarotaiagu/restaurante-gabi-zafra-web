@@ -484,7 +484,7 @@ h1, h2, h3 { font-weight: 500; }
       reposo con la pila completa. */
 .pila {
   --tope-pila: calc(var(--cab) + 3vh);
-  --alto-tarjeta: calc(100vh - var(--cab) - 6vh);
+  --alto-tarjeta: 36rem;          /* respaldo sin JS; el JS pone el alto de la más alta */
   --recorrido: 34vh;
   --reposo: 28vh;
   list-style: none; margin: 0 auto; padding: 0; max-width: 76rem;
@@ -495,7 +495,7 @@ h1, h2, h3 { font-weight: 500; }
 }
 .pila::after { content: ''; display: block; height: var(--reposo); }
 .pila__item .tarjeta { height: var(--alto-tarjeta); align-content: center; }
-.pila__item .ventana--tarjeta { width: min(100%, 230px, 24vh); }
+.pila__item .ventana--tarjeta { width: min(100%, 170px, 20vh); margin-top: 1.2rem; }
 
 .tarjeta {
   position: relative;
@@ -972,10 +972,20 @@ html.con-cursor, html.con-cursor * { cursor: none !important; }
   .menu-abierto .cabecera__nav { transform: none; }
 
   .hero__velo {
-    background: linear-gradient(0deg, rgba(20, 9, 4, .9) 0%, rgba(20, 9, 4, .72) 40%, rgba(20, 9, 4, .08) 72%, rgba(20, 9, 4, .25) 100%);
+    background: linear-gradient(0deg, rgba(20, 9, 4, .92) 0%, rgba(20, 9, 4, .8) 50%, rgba(20, 9, 4, .62) 70%, rgba(20, 9, 4, .3) 88%, rgba(20, 9, 4, .3) 100%);
   }
-  .hero__sello { width: 124px; top: calc(var(--cab) + 1rem); }
-  .hero__contenido { bottom: 4.6rem; }
+  /* en móvil el texto va en flujo con el hueco del sello reservado arriba:
+     anclado abajo en absoluto, en pantallas bajas subía hasta pisarlo */
+  .hero {
+    --sello-movil: 104px;
+    height: auto; min-height: 100vh; min-height: 100svh;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: calc(var(--cab) + .9rem + var(--sello-movil) + 1.4rem) var(--margen) 3.4rem;
+  }
+  .hero__sello { width: var(--sello-movil); top: calc(var(--cab) + .9rem); }
+  .hero__contenido { position: relative; left: auto; bottom: auto; width: 100%; }
+  .hero__titulo { font-size: clamp(2.3rem, 10.5vw, 3.2rem); }
+  .hero__entrada { margin-bottom: 1.6rem; }
   .hero__desliza { display: none; }
 
   .casa__cuerpo { grid-template-columns: 1fr; }

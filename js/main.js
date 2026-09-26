@@ -359,10 +359,26 @@
   /* ───────────────── carta: los arcos se apilan ───────────────── */
   (function pila() {
     var items = Array.prototype.slice.call(document.querySelectorAll('.pila__item'));
-    if (!items.length || !movimiento) return;
+    var lista = document.getElementById('pila');
+    if (!items.length || !lista) return;
     var disparos = [];
 
+    /* Todas miden lo que la más alta: es la condición para que la pila no se
+       deshaga (ver estilos.css). Se mide el contenido real, no la pantalla,
+       así que las tarjetas no son más altas de lo que necesitan. */
+    function igualar() {
+      var tarjetas = items.map(function (it) { return it.querySelector('.tarjeta'); });
+      lista.style.removeProperty('--alto-tarjeta');
+      if (getComputedStyle(items[0]).position !== 'sticky') return;
+      tarjetas.forEach(function (t) { t.style.height = 'auto'; });
+      var alto = Math.max.apply(null, tarjetas.map(function (t) { return t.offsetHeight; }));   /* offsetHeight ignora el scale */
+      tarjetas.forEach(function (t) { t.style.removeProperty('height'); });
+      lista.style.setProperty('--alto-tarjeta', alto + 'px');
+    }
+
     function montar() {
+      igualar();
+      if (!movimiento) return;
       disparos.forEach(function (d) { d.kill(); });
       disparos = [];
       items.forEach(function (it) {
@@ -392,11 +408,13 @@
     var temporizador;
     window.addEventListener('resize', function () {
       clearTimeout(temporizador);
-      temporizador = setTimeout(function () { montar(); window.ScrollTrigger.refresh(); }, 220);
+      temporizador = setTimeout(function () { montar(); if (window.ScrollTrigger) window.ScrollTrigger.refresh(); }, 220);
     });
     document.addEventListener('densidad-cambiada', function () {
-      setTimeout(function () { montar(); window.ScrollTrigger.refresh(); }, 60);
+      setTimeout(function () { montar(); if (window.ScrollTrigger) window.ScrollTrigger.refresh(); }, 60);
     });
+    /* Fraunces cambia la altura de los textos al llegar: volver a medir */
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { montar(); if (window.ScrollTrigger) window.ScrollTrigger.refresh(); });
   })();
 
   /* ───────────────── contadores ───────────────── */

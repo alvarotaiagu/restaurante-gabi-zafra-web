@@ -394,6 +394,24 @@ try {
     await contexto.close();
   }
 
+  /* ───── 3b. móviles bajos: el texto del hero no pisa el sello ───── */
+  for (const vp of [{ width: 375, height: 667 }, { width: 360, height: 640 }, { width: 390, height: 844 }, { width: 768, height: 1024 }]) {
+    const { contexto, page } = await nuevaPagina(navegador, { viewport: vp });
+    await contexto.addInitScript(() => { try { localStorage.setItem('gabi-cookies', 'ok'); } catch (e) {} });
+    await page.goto(base + '/index.html', { waitUntil: 'networkidle' });
+    await page.waitForTimeout(5200);
+    const r = await page.evaluate(() => {
+      const caja = e => e.getBoundingClientRect();
+      const s = caja(document.querySelector('.hero__sello'));
+      const c = caja(document.querySelector('.hero__contenido'));
+      const h = caja(document.getElementById('inicio'));
+      return { selloAbajo: Math.round(s.bottom), textoArriba: Math.round(c.top), textoAbajo: Math.round(c.bottom), heroAbajo: Math.round(h.bottom) };
+    });
+    comprobar(r.textoArriba >= r.selloAbajo + 8 && r.textoAbajo <= r.heroAbajo, 'hero ' + vp.width + '×' + vp.height + ': el texto no pisa el sello ni se sale → ' + JSON.stringify(r));
+    if (conCapturas) await page.screenshot({ path: foto('3b-hero-' + vp.width + 'x' + vp.height + '.png') });
+    await contexto.close();
+  }
+
   /* ───── 4. sin GSAP (CDN caído) ───── */
   {
     const { contexto, page, errores } = await nuevaPagina(navegador);
