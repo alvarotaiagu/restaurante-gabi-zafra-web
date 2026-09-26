@@ -202,7 +202,7 @@ h1, h2, h3 { font-weight: 500; }
   display: flex; align-items: center; gap: .75rem;
   color: inherit; text-decoration: none;
 }
-.cabecera__sello { flex: none; border-radius: 50%; background: var(--crema); box-shadow: 0 0 0 1px rgba(30, 42, 68, .12); }
+.cabecera__sello { flex: none; display: block; }
 .cabecera__nombre {
   display: flex; flex-direction: column;
   font: 500 1.55rem/1 var(--tipo-titulo);
